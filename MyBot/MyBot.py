@@ -12,6 +12,15 @@ admin_key = False
 @bot.message_handler(commands=['start'])
 def welcome(message):
 
+	db = sqlite3.connect('DB/subjectname.db')
+	cursor = db.cursor()
+	us_id = message.from_user.id
+	us_name = "{0.first_name} {0.last_name}".format(message.from_user, bot.get_me())
+	query = f""" INSERT OR IGNORE INTO user_info (user_id, user_name) VALUES ({us_id}, '{us_name}')"""
+	cursor.execute(query)
+	records=cursor.fetchall()
+	db.commit()
+
 	global admin_key
 	admin_id = [550868377]
 
@@ -236,7 +245,7 @@ def read_book(book_id, book_leng,botchat_id):
 	cursor.execute(query)
 	records = cursor.fetchall()
 	db.commit()
-	res = records[0][0]
+	res = str(records[0][0])
 	if res == "None":
 		bot.send_message(botchat_id.chat.id, "Այս լեզվով չկա, միգուցե ուրիշ լեզու ընտրեք ? 🤔")
 	else:
