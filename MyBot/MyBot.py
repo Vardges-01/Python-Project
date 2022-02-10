@@ -46,6 +46,8 @@ def welcome(message):
 
 rec_key = False
 search_key = False
+read_key = False
+book_id = 0
 
 @bot.message_handler(content_types=["text"])
 def text(message):
@@ -96,9 +98,6 @@ def text(message):
 			show_search_books(message.text, message.chat.id)
 
 
-read_key = False
-book_id = 0
-
 @bot.callback_query_handler(func=lambda call:True)
 def callback_inline(call):
 
@@ -108,7 +107,7 @@ def callback_inline(call):
 
 	try:
 		if call.message:
-	
+
 			subj_names = os.listdir("res/Books")
 			for book_type in subj_names:
 				lngs.append(book_type)
@@ -155,6 +154,7 @@ def update_db(botchat_id):
 
 	bot.send_message(botchat_id, "Տվյալները թարմացված են 📋🎉")
 
+
 def insert_books(books_list,book_type,book_leng):
 
 	db = sqlite3.connect('DB/subjectname.db')
@@ -163,7 +163,7 @@ def insert_books(books_list,book_type,book_leng):
 	for x in books_list:
 
 		book_name = x.rstrip(".pdf")
-		addr = f"res/Books/{book_type}/{book_leng}/{x}" 
+		addr = f"res/Books/{book_type}/{book_leng}/{x}"
 		if book_leng == "En":
 			query = f""" INSERT INTO books_names (type, name, en_addres) VALUES('{book_type}','{book_name}', '{addr}')"""
 			cursor.execute(query)
@@ -230,7 +230,6 @@ def show_books(book_type,botchat):
 	bot.edit_message_text(chat_id=botchat.chat.id, message_id=botchat.message_id, text=book_list, reply_markup=markup)
 
 
-
 # Read Book and Send
 def read_book(book_id, book_leng,botchat_id):
 	db=sqlite3.connect('DB/subjectname.db')
@@ -251,7 +250,6 @@ def read_book(book_id, book_leng,botchat_id):
 	else:
 		file = open(res, "rb")
 		bot.send_document(botchat_id.chat.id,file)
-
 
 
 # RUN
